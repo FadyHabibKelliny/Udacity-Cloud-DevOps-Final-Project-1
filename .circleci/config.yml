@@ -189,7 +189,7 @@ jobs:
                 curl https://kvdb.io/J54Yx4YGJJvVn45uXEVWBZ/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d 1
             else
                 curl https://kvdb.io/J54Yx4YGJJvVn45uXEVWBZ/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d 0
-           fi
+            fi
       - destroy-environment
 
 
