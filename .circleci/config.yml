@@ -187,6 +187,7 @@ jobs:
           command: |
             cd backend
             npm i
+            npm fund
             npm audit fix --audit-level=critical --force
             npm audit --audit-level=criticalnpm audit fix
             npm run build
@@ -199,9 +200,9 @@ jobs:
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             cat ${CIRCLE_WORKFLOW_ID:0:7}
             then
-              curl https://kvdb.io/J54Yx4YGJJvVn45uXEVWBZ/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d 1
+              curl https://kvdb.io/9vHCp3NV34cBqPZjq4KCjY/migration_$\{CIRCLE_WORKFLOW_ID:0:7\}  -d 1
             else
-              curl https://kvdb.io/J54Yx4YGJJvVn45uXEVWBZ/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d 0
+              curl https://kvdb.io/9vHCp3NV34cBqPZjq4KCjY/migration_$\{CIRCLE_WORKFLOW_ID:0:7\}  -d 0
             fi
       - destroy_environment
 
