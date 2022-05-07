@@ -29,12 +29,9 @@
     # add code for postgress DB
     - name: "install dependances for project"
       shell: |
+        sudo apt-get -y install
         sudo apt-get -y update
-        sudo apt-get -y install \
-          ca-certificates \
-          curl \
-          gnupg \
-          lsb-release
+        sudo apt-get -y install ca-certificates curl gnupg lsb-release
 
         curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
         echo \
