@@ -21,15 +21,20 @@
       apt:
         name: python3
         update_cache: yes
+
+
+
+
+
     # add code for postgress DB
     - name: "install dependances for project"
       shell: |
         sudo apt-get -y update
         sudo apt-get -y install \
-          ca-certificates \
-          curl \
-          gnupg \
-          lsb-release
+        ca-certificates \
+        curl \
+        gnupg \
+        lsb-release
 
         curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --deamor -o /usr/share/keyrings/docker-archive-keyring.gpg
         echo \
@@ -38,10 +43,9 @@
           sudo apt-get -y update
           sudo apt-get -y install ocker-ce docker-ce-cli containerd.io docker-compose-plugin
           sudo docker run --name some-postgres -e POSTGRES_PASSWORD=123456789 -d -p 5432:5432 postgress
-          
-    roles:
-    - configure-server
-    - configure-prometheus-node-exporter
+
+
+
   # Get the environment variables from CircleCI and add to the EC2 instance
   environment:
     - TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION')}}"
