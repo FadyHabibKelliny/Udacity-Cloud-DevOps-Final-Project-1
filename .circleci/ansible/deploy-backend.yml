@@ -11,6 +11,18 @@
   roles:
     - deploy
 
+  # Get the environment variables from CircleCI and add to the EC2 instance
+  environment:
+    - TYPEORM_CONNECTION: postgres
+    - TYPEORM_ENTITIES: "{{ lookup('env', 'TYPEORM_ENTITIES')}}"
+    - TYPEORM_HOST: localhost
+    - TYPEORM_PORT: 5432
+    - TYPEORM_USERNAME: "{{ lookup('env', 'TYPEORM_USERNAME')}}"
+    - TYPEORM_PASSWORD: 123456789
+    - TYPEORM_DATABASE: postgress
+    - TYPEORM_MIGRATIONS: "{{ lookup('env', 'TYPEORM_MIGRATIONS')}}"
+    - TYPEORM_MIGRATIONS_DIR: "{{ lookup('env', 'TYPEORM_MIGRATIONS_DIR')}}"
+
 # add code for postgress DB
 - name: "install dependances for project"
   shell: |
