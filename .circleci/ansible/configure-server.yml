@@ -23,8 +23,8 @@
         
 # add code for postgress DB
     - name: "install dependances for project"
+      become: true
       shell: |
-        sudo apt-get -y install
         sudo apt-get -y update
         sudo apt-get -y install ca-certificates curl gnupg lsb-release
 
