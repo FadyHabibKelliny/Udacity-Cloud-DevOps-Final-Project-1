@@ -187,7 +187,6 @@ jobs:
           command: |
             cd backend
             npm i
-            npm audit fix
             npm run build
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
