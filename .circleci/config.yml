@@ -13,6 +13,26 @@ commands:
           command: |
             aws cloudformation delete-stack --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5}
 
+
+  revert-migrations:
+    description: Reverting last migration if successfully run in the current workflow.
+    parameters:
+      workflow_id:
+        type: string 
+    steps:
+      - run:
+          name: Revert migrations
+          when: on_fail
+          command: |
+              SUCCESS=$(curl https://keyvalue.immanuel.co/api/KeyVal/GetValue/wu12yolq/migration_<< parameters.workflow_id >>)
+              # Logic for reverting the database state
+              if (( $SUCCESS == 1 ));
+              then
+                  cd ~/project/backend/
+                  npm install
+                  npm run migration:revert
+              fi  
+
 jobs:
   build-frontend:
     docker:
@@ -176,35 +196,39 @@ jobs:
       - checkout
       - restore_cache:
           keys: [backend-build]
+
+      - run:
+          name: Install aws dependencies
+          command: |
+            sudo apt update && sudo apt install -yy less
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+
       - run:
           name: Run migrations
           command: |
             cd backend
             npm cache clean --force
             rm -rf node_modules
-            npm install
-            npm audit fix --audit-level=critical --force
-            npm audit --audit-level=critical
+            npm i
+            npm run build
             npm run migrations > migrations_dump.txt
-
-#      - run:
-#          name: Send migration status to kvdb.io
-#          command: |   
-#            if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
-#            cat ${CIRCLE_WORKFLOW_ID:0:7}
-#            then
-#              curl https://kvdb.io/9vHCp3NV34cBqPZjq4KCjY/migration_$\{CIRCLE_WORKFLOW_ID:0:7\}  -d 1
-#            else
-#              curl https://kvdb.io/9vHCp3NV34cBqPZjq4KCjY/migration_$\{CIRCLE_WORKFLOW_ID:0:7\}  -d 0
-#            fi
+            cat migrations_dump.txt
 
       - run:
-          name: Sending migration status to a key value store.
+          name: Sending migration status kvdb.io
           command: |   
-              if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
-              then
-                  curl -X POST https://keyvalue.immanuel.co/api/KeyVal/UpdateValue/3cg7aby9/migration_${CIRCLE_WORKFLOW_ID:0:7}/1 -d "Content-Length: 1024"
-              fi               
+              iif grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
+            cat ${CIRCLE_WORKFLOW_ID:0:7}
+            then
+              curl https://kvdb.io/FmND35bzWsXaJQb2MQRV5R/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d 1
+              echo $(curl --insecure  https://kvdb.io/FmND35bzWsXaJQb2MQRV5R/migration_${CIRCLE_WORKFLOW_ID:0:7})
+            else
+              # This part was created as revert migration will fail because the key in KVDB will not be created, that's why it is created now for both scnarios.
+              curl https://kvdb.io/FmND35bzWsXaJQb2MQRV5R/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d 0
+              echo $(curl --insecure  https://kvdb.io/FmND35bzWsXaJQb2MQRV5R/migration_${CIRCLE_WORKFLOW_ID:0:7})
+            fi      
       - destroy_environment
 
   deploy-frontend:
