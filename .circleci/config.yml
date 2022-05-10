@@ -11,8 +11,8 @@ commands:
           # ${CIRCLE_WORKFLOW_ID:0:5} takes the first 5 chars of the variable CIRCLE_CI_WORKFLOW_ID 
           when: on_fail
           command: |
-            aws cloudformation delete-stack --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5}
-
+            aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:5}
+            aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:5}
 
   revert-migrations:
     description: Reverting last migration if successfully run in the current workflow.
@@ -309,24 +309,25 @@ jobs:
       - run:
           name: Installing dependencies
           command: |
-            apk add --update ansible
-            apk add --update gzip
-            apk add --update tar
             apk add --update npm
             apk add --update nodejs
             apk add --update curl
             pip install awscli
+      - run:      
+          name: "wait 600 seconds for target connection to become reachable/usable."
+          wait_for_connection:
+
       - run:
           name: smoke-test for backend.
           command: |
-            export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --output text --filter Name=tag:Name,Values="backend-${CIRCLE_WORKFLOW_ID:0:7}")
+#           export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --output text --filter Name=tag:Name,Values="backend-${CIRCLE_WORKFLOW_ID:0:7}")
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
             if curl "${API_URL}/api/status" | grep "ok"
             then
-                exit 0
+                return 0
             else
-                exit 1
+                return 1
             fi
       - run:
           name: smoke-test for frontend.
@@ -335,9 +336,9 @@ jobs:
             echo ${URL} 
             if curl -s ${URL} | grep "Welcome"
             then
-              exit 0
+              return 1
             else
-              exit 1
+              return 1
             fi
 workflows:
   default:
