@@ -288,9 +288,9 @@ jobs:
             cd ..
             # Zip the directory
             tar -C backend -czvf artifact.tar.gz .
-            mkdir -v .circleci/ansible/roles/deploy/files
+            mkdir -v .circleci/ansible/roles/deploy/tasks main.yml
             cp artifact.tar.gz .circleci/ansible/roles/deploy/files/artifact.tar.gz
-            cd .circleci/ansible/roles/deploy/files
+            cd .circleci/ansible/roles/deploy/tasks
             ls
             cd ~
       - run:
