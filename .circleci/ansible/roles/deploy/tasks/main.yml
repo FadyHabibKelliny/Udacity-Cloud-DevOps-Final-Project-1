@@ -1,41 +1,36 @@
 ---
-- name: install tar
-  become: yes
-  apt:
-    name: tar
-    state: latest
-    update_cache: yes
-
-- name: Add nodejs
-  shell: |
-    curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash 
-    sudo apt-get install -y nodejs
-- name: install pm2
-  become: yes
-  npm:
-    name: pm2
-    global: yes
-    state: latest
-    production: yes
-
-- name: copy built backend files
-  become: yes
+- name: "Copying compiled app"
   copy:
-    src: artifact.tar.gz
-    dest: /home/ubuntu
+    src: "~/artifact.tar.gz"
+    dest: "~/artifact.tar.gz"
 
-- name: "Ensuring built backend files is copied"
+- name: "Make folder"
+  shell: mkdir ~/backend
+
+- name: "Unzip backend files to correct directory"
+  ansible.builtin.unarchive:
+    src: ~/artifact.tar.gz
+    dest: ~/backend
+    
+- name: "Install dependencies for project"
+  shell: |
+    cd ~/backend
+    npm install
+- name: "Copying env vars"
+  copy:
+    src: "~/.env"
+    dest: "~/backend/.env"
+
+- name: "Ensuring env vars is copied"
   shell: |
     sleep 15
-
-- name: Extract backend files
+- name: "Executing node"
   shell: |
-    cd /home/ubuntu
-    tar -xzvf artifact.tar.gz
-
-
-- name: pm2 start
-  shell: |    
-    npm i
+    cd ~/backend
     pm2 stop default
     pm2 start npm -- start
+  register: execute_node
+
+- name: print message
+  debug:
+    msg: "{{ execute_node.stdout_lines }}"
