@@ -303,25 +303,18 @@ jobs:
 
   smoke-test:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: amazon/aws-cli
     steps:
       - checkout
       - run:
           name: Installing dependencies
           command: |
-            apk add --update nodejs
-            apk add --update ansible
-            apk add --update npm
-            apk add --update tar
-            apk add --update gzip
-            apk add --update curl
-            pip install awscli
+            yum update -y
+            yum upgrade -y 
+            yum install curl -y
 
       - run:
           name: smoke-test for backend.
-          wait_for_connection:
-            delay: 60
-            timeout: 600
           command: |
             export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --output text --filter Name=tag:Name,Values="backend-${CIRCLE_WORKFLOW_ID:0:7}")
             export API_URL="http://${BACKEND_IP}:3030"
