@@ -211,8 +211,6 @@ jobs:
           name: Run migrations
           command: |
             cd backend
-            npm cache clean --force
-            rm -rf node_modules
             npm i
             npm run build
             npm run migrations > migrations_dump.txt
@@ -303,15 +301,19 @@ jobs:
 
   smoke-test:
     docker:
-      - image: amazon/aws-cli
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
       - run:
           name: Installing dependencies
           command: |
-            yum update -y
-            yum upgrade -y 
-            yum install curl -y
+            apk add --update ansible
+            apk add --update gzip
+            apk add --update tar
+            apk add --update npm
+            apk add --update nodejs
+            apk add --update curl
+            pip install awscli
 
       - run:
           name: smoke-test for backend.
