@@ -27,9 +27,6 @@
 - name: "Executing node"
   shell: |
     cd ~/backend
-    sudp apt update
-    sudo apt install nodejs npm
-    sudo npm i
     pm2 stop default
     pm2 start npm -- start
   register: execute_node
