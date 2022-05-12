@@ -301,19 +301,15 @@ jobs:
 
   smoke-test:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: amazon/aws-cli
     steps:
       - checkout
       - run:
           name: Installing dependencies
           command: |
-            apk add --update ansible
-            apk add --update gzip
-            apk add --update tar
-            apk add --update npm
-            apk add --update nodejs
-            apk add --update curl
-            pip install awscli
+            yum update -y
+            yum upgrade -y 
+            yum install curl -y
 
       - run:
           name: smoke-test for backend.
