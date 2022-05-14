@@ -302,7 +302,6 @@ jobs:
             mkdir -v .circleci/ansible/roles/deploy/files
             cp artifact.tar.gz .circleci/ansible/roles/deploy/files/artifact.tar.gz
             cd .circleci/ansible/roles/deploy/files
-            ls
             cd ~
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
