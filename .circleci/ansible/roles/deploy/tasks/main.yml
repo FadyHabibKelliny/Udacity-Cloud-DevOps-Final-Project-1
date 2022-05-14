@@ -1,17 +1,17 @@
 ---
-- name: install tar
+- name: tar install
   become: yes
   apt:
     name: tar
     state: latest
     update_cache: yes
 
-- name: "Add nodejs 13.x"
+- name: install nodejs 13.x
   shell: |
     curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash 
     sudo apt-get install -y nodejs
 
-- name: install pm2
+- name: pm 2 install
   become: yes
   npm:
     name: pm2
@@ -19,17 +19,17 @@
     state: latest
     production: yes
 
-- name: copy built backend files
+- name: copy built backend files and extract
   become: yes
   copy:
     src: artifact.tar.gz
     dest: /home/ubuntu
-
-- name: Extract backend
   shell: |
     cd /home/ubuntu
     tar -xzvf artifact.tar.gz
-- name: Start pm2
+
+
+- name: npm install and Start pm2
   shell: |    
     npm i
     pm2 stop default
