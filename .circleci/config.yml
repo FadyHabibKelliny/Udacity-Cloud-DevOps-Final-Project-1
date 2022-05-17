@@ -198,7 +198,8 @@ jobs:
       - checkout
       - restore_cache:
           keys: [backend-build]
-
+      - attach_workspace:
+          at: .
       - run:
           name: Install aws dependencies
           command: |
