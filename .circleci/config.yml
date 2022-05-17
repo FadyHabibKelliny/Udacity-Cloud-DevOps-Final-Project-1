@@ -129,7 +129,6 @@ jobs:
             npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
 
-
   deploy-infrastructure:
     docker:
       - image: amazon/aws-cli
@@ -194,20 +193,12 @@ jobs:
 
   run-migrations:
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/node:13.8.0
     steps:
       - checkout
+      - install_awscli
       - restore_cache:
           keys: [backend-build]
-
-      - run:
-          name: Install aws dependencies
-          command: |
-            sudo apt update && sudo apt install -yy less
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
-
       - run:
           name: Run migrations
           command: |
@@ -225,6 +216,7 @@ jobs:
                   curl -X POST https://keyvalue.immanuel.co/api/KeyVal/UpdateValue/hfew3q89/migration_${CIRCLE_WORKFLOW_ID:0:7}/1 -d "Content-Length: 1024"
               fi      
       - destroy_environment
+      - revert_migrations
 
   deploy-frontend:
     docker:
