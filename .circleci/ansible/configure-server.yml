@@ -22,7 +22,6 @@
         update_cache: yes
 
   environment:
-    - ENVIRONMENT: "production"
     - TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION') }}"  
     - TYPEORM_ENTITIES: "{{ lookup('env', 'TYPEORM_ENTITIES') }}"
     - TYPEORM_HOST: "{{ lookup('env', 'TYPEORM_HOST') }}"
@@ -32,7 +31,7 @@
     - TYPEORM_DATABASE: "{{ lookup('env', 'TYPEORM_DATABASE') }}"
     - TYPEORM_MIGRATIONS: "{{ lookup('env', 'TYPEORM_MIGRATIONS') }}"
     - TYPEORM_MIGRATIONS_DIR: "{{ lookup('env', 'TYPEORM_MIGRATIONS_DIR') }}"
-
+    - KVDB_BUCKET: "{{ lookup('env', 'KVDB_BUCKET') }}"
   roles:
     - configure-server
     - configure-prometheus-node-exporter
