@@ -220,6 +220,7 @@ jobs:
       - destroy_environment
       - revert_migrations
 
+
   deploy-frontend:
     docker:
       - image: nikolaik/python-nodejs:python3.7-nodejs14
