@@ -363,7 +363,7 @@ jobs:
           command: |
             export OLD_WORKFLOW_ID=$(aws cloudformation list-exports --query "Exports[?Name==\`WorkflowID\`].Value" --no-paginate --output text)
             echo "Old Wokflow ID: $OLD_WORKFLOW_ID"
-            curl -X POST https://keyvalue.immanuel.co/api/KeyVal/UpdateValue/${KEYVALUE_BUCKET}/oldworkflowid/${OLD_WORKFLOW_ID} -d "${OLD_WORKFLOW_ID}"
+            curl -X POST https://keyvalue.immanuel.co/api/KeyVal/UpdateValue/${KEYVALUE_BUCKET}/oldworkflowid/${OLD_WORKFLOW_ID} -d ${OLD_WORKFLOW_ID}
       - run:
           name: Update cloudfront distribution
           command: |
@@ -397,7 +397,7 @@ jobs:
             echo Stack names: "${STACKS[@]}"
 
             export OLD_WORKFLOW_ID=$(curl --insecure https://keyvalue.immanuel.co/api/KeyVal/GetValue/${KEYVALUE_BUCKET}/oldworkflowid) 
-            echo Old Workflow ID: ($OLD_WORKFLOW_ID).replace(/""/g,)
+            echo Old Workflow ID: $OLD_WORKFLOW_ID
 
             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
             then
