@@ -374,39 +374,39 @@ jobs:
               --tags project=udapeople
       # Here's where you will add some code to rollback on failure  
 
-  cleanup:
-    docker:
-      - image: amazon/aws-cli
-    steps:
-      - checkout
-      - run:
-          name: Installing dependencies
-          command: |
-            yum update -y
-            yum upgrade -y
-            yum install curl -y
-            yum -y install tar gzip
-      - attach_workspace:
-          at: .
-      - run:
-          name: Fetch and remove oldStack Workflow
-          command: |
-            export STACKS=($(aws cloudformation list-stacks \
-                --query "StackSummaries[*].StackName" \
-                --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
-            echo Stack names: "${STACKS[@]}"
+  # cleanup:
+  #   docker:
+  #     - image: amazon/aws-cli
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: Installing dependencies
+  #         command: |
+  #           yum update -y
+  #           yum upgrade -y
+  #           yum install curl -y
+  #           yum -y install tar gzip
+  #     - attach_workspace:
+  #         at: .
+  #     - run:
+  #         name: Fetch and remove oldStack Workflow
+  #         command: |
+  #           export STACKS=($(aws cloudformation list-stacks \
+  #               --query "StackSummaries[*].StackName" \
+  #               --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
+  #           echo Stack names: "${STACKS[@]}"
 
-            export OLD_WORKFLOW_ID=$(curl --insecure https://keyvalue.immanuel.co/api/KeyVal/GetValue/${KEYVALUE_BUCKET}/oldworkflowid)
-            OLD_WORKFLOW_ID = OLD_WORKFLOW_ID.replace(/['"]+/g, '')
-            echo Old Workflow ID: $OLD_WORKFLOW_ID
+  #           export OLD_WORKFLOW_ID=$(curl --insecure https://keyvalue.immanuel.co/api/KeyVal/GetValue/${KEYVALUE_BUCKET}/oldworkflowid)
+  #           OLD_WORKFLOW_ID = OLD_WORKFLOW_ID.replace(/['"]+/g, '')
+  #           echo Old Workflow ID: $OLD_WORKFLOW_ID
 
-            if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
-            then
-              echo "----------------Delete old version----------------"
-              aws s3 rm "s3://udapeople-${OLD_WORKFLOW_ID}" --recursive
-              aws cloudformation delete-stack --stack-name "udapeople-frontend-${OLD_WORKFLOW_ID}"
-              aws cloudformation delete-stack --stack-name "udapeople-backend-${OLD_WORKFLOW_ID}"
-            fi
+  #           if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
+  #           then
+  #             echo "----------------Delete old version----------------"
+  #             aws s3 rm "s3://udapeople-${OLD_WORKFLOW_ID}" --recursive
+  #             aws cloudformation delete-stack --stack-name "udapeople-frontend-${OLD_WORKFLOW_ID}"
+  #             aws cloudformation delete-stack --stack-name "udapeople-backend-${OLD_WORKFLOW_ID}"
+  #           fi
     
 workflows:
   default:
@@ -438,5 +438,5 @@ workflows:
           requires: [deploy-backend, deploy-frontend]
       - cloudfront-update:
           requires: [smoke-test]
-      - cleanup:
-          requires: [cloudfront-update]
+      # - cleanup:
+      #     requires: [cloudfront-update]
