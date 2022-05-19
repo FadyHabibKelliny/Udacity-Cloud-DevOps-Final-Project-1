@@ -396,7 +396,7 @@ jobs:
                 --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
             echo Stack names: "${STACKS[@]}"
 
-            export OLD_WORKFLOW_ID=$(curl https://keyvalue.immanuel.co/api/KeyVal/GetValue/${KEYVALUE_BUCKET}/oldworkflowid) 
+            export OLD_WORKFLOW_ID=$(curl --insecure https://keyvalue.immanuel.co/api/KeyVal/GetValue/${KEYVALUE_BUCKET}/oldworkflowid) 
             echo Old Workflow ID: $OLD_WORKFLOW_ID
 
             if [[ "${CIRCLE_WORKFLOW_ID:0:7}" != "$OLD_WORKFLOW_ID" ]]
@@ -408,7 +408,6 @@ jobs:
             else
               echo "----------------Cannot Cleanup----------------" 
             fi
-
     
 workflows:
   default:
