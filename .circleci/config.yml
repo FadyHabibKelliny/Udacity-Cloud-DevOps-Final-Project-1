@@ -399,10 +399,10 @@ jobs:
             export OLD_WORKFLOW_ID=$(curl --insecure https://keyvalue.immanuel.co/api/KeyVal/GetValue/${KEYVALUE_BUCKET}/oldworkflowid) 
             echo Old Workflow ID: $OLD_WORKFLOW_ID
 
-            if [[ "${CIRCLE_WORKFLOW_ID:0:7}" != "$OLD_WORKFLOW_ID" ]]
+            if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
             then
               echo "----------------Delete old version----------------"
-              aws s3 rm "s3://udapeople-$OLD_WORKFLOW_ID" --recursive
+              aws s3 rm "s3://udapeople-${OLD_WORKFLOW_ID}" --recursive
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OLD_WORKFLOW_ID}"
               aws cloudformation delete-stack --stack-name "udapeople-backend-${OLD_WORKFLOW_ID}"
             else
