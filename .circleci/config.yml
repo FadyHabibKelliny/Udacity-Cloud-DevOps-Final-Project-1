@@ -363,7 +363,7 @@ jobs:
           command: |
             export OLD_WORKFLOW_ID=$(aws cloudformation list-exports --query "Exports[?Name==\`WorkflowID\`].Value" --no-paginate --output text)
             echo "Old Wokflow ID: $OLD_WORKFLOW_ID"
-            curl -X POST https://keyvalue.immanuel.co/api/KeyVal/UpdateValue/${KEYVALUE_BUCKET}/oldworkflowid/${OldWorkflowID} -d "Content-Length: 1024"
+            curl -X POST https://keyvalue.immanuel.co/api/KeyVal/UpdateValue/${KEYVALUE_BUCKET}/oldworkflowid/${OLD_WORKFLOW_ID} -d "Content-Length: 1024"
       - run:
           name: Update cloudfront distribution
           command: |
