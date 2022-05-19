@@ -397,7 +397,7 @@ jobs:
             echo Stack names: "${STACKS[@]}"
 
             export OLD_WORKFLOW_ID=$(curl --insecure https://keyvalue.immanuel.co/api/KeyVal/GetValue/${KEYVALUE_BUCKET}/oldworkflowid) 
-            echo Old Workflow ID: $OLD_WORKFLOW_ID
+            echo Old Workflow ID: ($OLD_WORKFLOW_ID).replace(/""/g,)
 
             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
             then
