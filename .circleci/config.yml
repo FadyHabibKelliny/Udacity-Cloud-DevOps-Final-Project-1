@@ -344,38 +344,36 @@ jobs:
       - destroy_environment
       - revert_migrations
 
-  cloudfront-update:
-    docker:
-      - image: amazon/aws-cli
-    steps:
-      - checkout
-      - run:
-          name: Installing dependencies
-          command: |
-            yum update -y
-            yum upgrade -y 
-            yum install curl -y
-            yum -y install tar gzip
-      - attach_workspace:
-          at: .
-      - run:
-          name: get old workflow for cleanup from kvdb
-          command: |
-            export OLD_WORKFLOW_ID=$(aws cloudformation list-exports --query "Exports[?Name==\`WorkflowID\`].Value" --no-paginate --output text)
-            echo "Old Wokflow ID: $OLD_WORKFLOW_ID"
-            curl -X POST https://keyvalue.immanuel.co/api/KeyVal/UpdateValue/${KEYVALUE_BUCKET}/oldworkflowid/${OLD_WORKFLOW_ID} -d "Content-Length: 1024"
-      - run:
-          name: Update cloudfront distribution
-          command: |
-            aws cloudformation deploy \
-            --template-file .circleci/files/cloudfront.yml \
-            --stack-name InitialStack \
-            --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
-            --tags project=udapeople
+  # cloudfront-update:
+  #   docker:
+  #     - image: amazon/aws-cli
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: Installing dependencies
+  #         command: |
+  #           yum update -y
+  #           yum upgrade -y 
+  #           yum install curl -y
+  #           yum -y install tar gzip
+  #     - attach_workspace:
+  #         at: .
+  #     - run:
+  #         name: get old workflow for cleanup from kvdb
+  #         command: |
+  #           export OLD_WORKFLOW_ID=$(aws cloudformation list-exports --query "Exports[?Name==\`WorkflowID\`].Value" --no-paginate --output text)
+  #           echo "Old Wokflow ID: $OLD_WORKFLOW_ID"
+  #           curl -X POST https://keyvalue.immanuel.co/api/KeyVal/UpdateValue/${KEYVALUE_BUCKET}/oldworkflowid/${OLD_WORKFLOW_ID} -d "Content-Length: 1024"
+  #     - run:
+  #         name: Update cloudfront distribution
+  #         command: |
+  #           aws cloudformation deploy \
+              # --template-file .circleci/files/cloudfront.yml \
+              # --stack-name InitialStack \
+              # --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
+              # --tags project=udapeople
       # Here's where you will add some code to rollback on failure  
-      - destroy_environment
-      - revert_migrations
-  
+
   # cleanup:
   #   docker:
   #     - image: amazon/aws-cli
@@ -437,7 +435,7 @@ workflows:
           requires: [run-migrations]
       - smoke-test:
           requires: [deploy-backend, deploy-frontend]
-      - cloudfront-update:
-          requires: [smoke-test]
+      # - cloudfront-update:
+      #     requires: [smoke-test]
       # - cleanup:
       #     requires: [cloudfront-update]
