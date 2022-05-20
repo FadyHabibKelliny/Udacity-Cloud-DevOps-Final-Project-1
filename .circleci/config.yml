@@ -391,18 +391,19 @@ jobs:
       - run:
           name: Fetch and remove oldStack Workflow
           command: |
-            export OldWorkflowID=$(curl https://keyvalue.immanuel.co/api/KeyVal/GetValue/${KEYVALUE_BUCKET}/oldworkflowid)
-            echo OldWorkflowID: "${OldWorkflowID}"
+            export Old_Workflow_ID=$( $(curl https://keyvalue.immanuel.co/api/KeyVal/GetValue/${KEYVALUE_BUCKET}/oldworkflowid) | tr -d '"')
+            echo Old_Workflow_ID: "${Old_Workflow_ID}"
+
             CurrentWorkflowID=${CIRCLE_WORKFLOW_ID:0:7}
             echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
-            export OldWorkflowID=$(echo ${OldWorkflowID} | tr -d '"')
-
-            if [[ "$CurrentWorkflowID" != "$OldWorkflowID" ]]
+            
+            if [[ "${CIRCLE_WORKFLOW_ID:0:7}" =! "$Old_Workflow_ID" ]]
             then
-              echo "$OldWorkflowID!=$CurrentWorkflowID => will delete old version"
-              aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
-              aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
-              aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
+              echo "will delete old version"
+              aws s3 rm s3://udapeople-${Old_Workflow_ID} --recursive
+              aws s3 rb s3://udapeople-${Old_Workflow_ID} --force
+              aws cloudformation delete-stack --stack-name "udapeople-frontend-${Old_Workflow_ID}"
+              aws cloudformation delete-stack --stack-name "udapeople-backend-${Old_Workflow_ID}"
             else 
               echo "can not delete old version"
             fi
