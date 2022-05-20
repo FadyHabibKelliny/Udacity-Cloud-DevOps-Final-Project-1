@@ -396,13 +396,13 @@ jobs:
                 --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
             echo Stack names: "${STACKS[@]}"
 
-            export OLD_WORKFLOW_ID=$(curl --insecure https://keyvalue.immanuel.co/api/KeyVal/GetValue/${KEYVALUE_BUCKET}/oldworkflowid) 
-            echo Old Workflow ID: $OLD_WORKFLOW_ID 
+            export OLD_WORKFLOW_ID=$(curl https://keyvalue.immanuel.co/api/KeyVal/GetValue/${KEYVALUE_BUCKET}/oldworkflowid) 
+            echo Old Workflow ID: "$OLD_WORKFLOW_ID"
             export OLD_WORKFLOW_ID=$(echo ${OLD_WORKFLOW_ID} | tr -d '"')
             if [[ "${STACKS[@]}" =! "${OldWorkflowID}" ]]
             then
               echo "----------------Delete old version----------------"
-              aws s3 rm "s3://udapeople-${OLD_WORKFLOW_ID}" --recursive
+              aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OLD_WORKFLOW_ID}"
               aws cloudformation delete-stack --stack-name "udapeople-backend-${OLD_WORKFLOW_ID}"
             fi
