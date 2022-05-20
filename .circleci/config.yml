@@ -396,13 +396,12 @@ jobs:
             echo Old_Workflow_ID: "${Old_Workflow_ID}"
 
             CurrentWorkflowID=${CIRCLE_WORKFLOW_ID:0:7}
-            echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
+            echo CIRCLE_WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID:0:7}"
             
             if [[ "${CIRCLE_WORKFLOW_ID:0:7}" =! "$Old_Workflow_ID" ]]
             then
               echo "will delete old version"
-              aws s3 rm s3://udapeople-${Old_Workflow_ID} --recursive
-              aws s3 rb s3://udapeople-${Old_Workflow_ID} --force
+              aws s3 rm "s3://udapeople-${Old_Workflow_ID}" --recursive
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${Old_Workflow_ID}"
               aws cloudformation delete-stack --stack-name "udapeople-backend-${Old_Workflow_ID}"
             else 
