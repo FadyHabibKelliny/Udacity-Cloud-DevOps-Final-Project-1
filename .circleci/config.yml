@@ -374,41 +374,41 @@ jobs:
               --tags project=udapeople
       # Here's where you will add some code to rollback on failure  
 
-  # cleanup:
-  #   docker:
-  #     - image: amazon/aws-cli
-  #   steps:
-  #     - checkout
-  #     - run:
-  #         name: Installing dependencies
-  #         command: |
-  #           yum update -y
-  #           yum upgrade -y
-  #           yum install curl -y
-  #           yum -y install tar gzip
-  #     - attach_workspace:
-  #         at: .
-  #     - run:
-  #         name: Fetch and remove oldStack Workflow
-  #         command: |
-  #           export OldWorkflowID=$(curl https://keyvalue.immanuel.co/api/KeyVal/GetValue/${KEYVALUE_BUCKET}/oldworkflowid)
-  #           echo OldWorkflowID: "${OldWorkflowID}"
-  #           CurrentWorkflowID=${CIRCLE_WORKFLOW_ID:0:7}
-  #           echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
-  #           export OldWorkflowID=$(echo ${OldWorkflowID} | tr -d '"')
+  cleanup:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Installing dependencies
+          command: |
+            yum update -y
+            yum upgrade -y
+            yum install curl -y
+            yum -y install tar gzip
+      - attach_workspace:
+          at: .
+      - run:
+          name: Fetch and remove oldStack Workflow
+          command: |
+            export OldWorkflowID=$(curl https://keyvalue.immanuel.co/api/KeyVal/GetValue/${KEYVALUE_BUCKET}/oldworkflowid)
+            echo OldWorkflowID: "${OldWorkflowID}"
+            CurrentWorkflowID=${CIRCLE_WORKFLOW_ID:0:7}
+            echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
+            export OldWorkflowID=$(echo ${OldWorkflowID} | tr -d '"')
 
-  #           if [[ "$CurrentWorkflowID" != "$OldWorkflowID" ]]
-  #           then
-  #             echo "$OldWorkflowID!=$CurrentWorkflowID => will delete old version"
-  #             aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
-  #             aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
-  #             aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
-  #           else 
-  #             echo "can not delete old version"
-  #           fi
+            if [[ "$CurrentWorkflowID" != "$OldWorkflowID" ]]
+            then
+              echo "$OldWorkflowID!=$CurrentWorkflowID => will delete old version"
+              aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
+              aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
+              aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
+            else 
+              echo "can not delete old version"
+            fi
 
-  #     - destroy_environment
-  #     - revert_migrations
+      - destroy_environment
+      - revert_migrations
 workflows:
   default:
     jobs:
@@ -439,8 +439,8 @@ workflows:
           requires: [deploy-backend, deploy-frontend]
       - cloudfront-update:
           requires: [smoke-test]
-      # - cleanup:
-      #     requires: [cloudfront-update]
+      - cleanup:
+          requires: [cloudfront-update]
 
 
 
