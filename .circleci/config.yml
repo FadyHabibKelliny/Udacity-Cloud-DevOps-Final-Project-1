@@ -391,7 +391,8 @@ jobs:
       - run:
           name: Fetch and remove oldStack Workflow
           command: |
-            export Old_Workflow_ID=$(curl https://keyvalue.immanuel.co/api/KeyVal/GetValue/${KEYVALUE_BUCKET}/oldworkflowid) | tr -d '"'
+            export Old_Workflow_ID=$(curl https://keyvalue.immanuel.co/api/KeyVal/GetValue/${KEYVALUE_BUCKET}/oldworkflowid)
+            export Old_Workflow_ID=$(echo ${Old_Workflow_ID} | tr -d '"')
             echo Old_Workflow_ID: "${Old_Workflow_ID}"
 
             CurrentWorkflowID=${CIRCLE_WORKFLOW_ID:0:7}
