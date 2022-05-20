@@ -391,7 +391,7 @@ jobs:
       - run:
           name: Fetch and remove oldStack Workflow
           command: |
-            export Old_Workflow_ID=$(curl https://keyvalue.immanuel.co/api/KeyVal/GetValue/${KEYVALUE_BUCKET}/oldworkflowid)
+            export Old_Workflow_ID=$(curl --insecure https://keyvalue.immanuel.co/api/KeyVal/GetValue/${KEYVALUE_BUCKET}/oldworkflowid)
             export Old_Workflow_ID=$(echo ${Old_Workflow_ID} | tr -d '"')
             echo Old_Workflow_ID: "${Old_Workflow_ID}"
             
@@ -403,7 +403,7 @@ jobs:
             if [[ "${STACKS[@]}" != "${OldWorkflowID}" ]]
             then
               echo "----------------Delete old version----------------"
-              aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
+              aws s3 rm "s3://udapeople-${Old_Workflow_ID}" --recursive
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OLD_WORKFLOW_ID}"
               aws cloudformation delete-stack --stack-name "udapeople-backend-${OLD_WORKFLOW_ID}"
             fi
