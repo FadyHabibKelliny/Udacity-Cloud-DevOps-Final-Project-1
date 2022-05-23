@@ -397,17 +397,20 @@ jobs:
             export Old_Workflow_ID=$(echo ${Old_Workflow_ID} | tr -d '"')
             echo Old_Workflow_ID: "${Old_Workflow_ID}"
             
-            export STACKS=($(aws cloudformation list-stacks \
-                 --query "StackSummaries[*].StackName" \
-                 --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
-             echo Stack names: "${STACKS[@]}"
+            Current_Workflow_ID=${CIRCLE_WORKFLOW_ID:0:7}
+            echo Current_Workflow_ID: "${CIRCLE_WORKFLOW_ID:0:7}"
 
-            if [[ "${STACKS[@]}" != "${Old_Workflow_ID}" ]]
+            if [[ $Old_Workflow_ID == "" ]]
+            then
+              echo "No old stacks"
+            else
+            if [[ "${CIRCLE_WORKFLOW_ID:0:7}" != "${Old_Workflow_ID}" ]]
             then
               echo "----------------Delete old version----------------"
               aws s3 rm "s3://udapeople-${Old_Workflow_ID}" --recursive
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OLD_WORKFLOW_ID}"
               aws cloudformation delete-stack --stack-name "udapeople-backend-${OLD_WORKFLOW_ID}"
+            fi
             fi
 
 workflows:
