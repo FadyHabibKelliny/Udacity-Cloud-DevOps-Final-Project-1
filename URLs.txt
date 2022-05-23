@@ -1,0 +1,9 @@
+URL1-github_repo:      https://github.com/FadyHabibKelliny/Udacity-Cloud-DevOps-Final-Project-1
+
+URL2-s3_bucket:        http://udapeople-24b1c6c.s3-website-us-west-2.amazonaws.com/#/employees
+
+URL3-cloudfront:       http://d2bdy4b9vc6n43.cloudfront.net/#/employees
+
+URL4-Backend_Endpoint: http://34.220.63.111:3030/api/status
+
+URL5-promethues:       http://ec2-54-200-7-28.us-west-2.compute.amazonaws.com:9090/targets
